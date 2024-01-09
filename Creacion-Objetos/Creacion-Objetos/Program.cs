@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http.Headers;
 
 namespace Creacion_Objetos
 {
@@ -11,6 +12,12 @@ namespace Creacion_Objetos
         public override string GetInfo()
         {
             return "El total es " + Total + " Impuesto es: " + Tax;
+        }
+
+        //Sobrecarga de metodo
+        public string GetInfo(string message)
+        {
+            return message;
         }
 
     }
