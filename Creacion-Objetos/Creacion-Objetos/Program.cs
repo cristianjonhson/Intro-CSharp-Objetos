@@ -8,7 +8,7 @@ namespace Creacion_Objetos
         public decimal Tax { get; set; } = 15;
         public SaleWithTax(decimal total, string saleName): base( total, saleName   ) { }
 
-        public string GetInfoWithTax()
+        public override string GetInfo()
         {
             return "El total es " + Total + " Impuesto es: " + Tax;
         }
@@ -29,7 +29,8 @@ namespace Creacion_Objetos
             SaleName = saleName;
         }
 
-        public string GetInfo()
+        //el virtual sirve para que el metodo padre se pueda sobreescribir
+        public virtual string GetInfo()
         {
             return SaleName;
         }
@@ -40,13 +41,13 @@ namespace Creacion_Objetos
         static void Main(string[] args)
         {
             SaleWithTax sale = new SaleWithTax(5000, "Iphone x");
-            sale.GetInfoWithTax();
+            sale.GetInfo();
 
             // Puedes acceder a las propiedades y métodos de Sale
-            Console.WriteLine($"Total: {sale.Total}, SaleName: {sale.GetInfo()}");
+            Console.WriteLine($"Total: {sale.Total}");
 
             // Llama a GetInfoWithTax y muestra el resultado en la consola
-            Console.WriteLine(sale.GetInfoWithTax());
+            Console.WriteLine(sale.GetInfo());
 
             // Esperar la entrada del usuario antes de cerrar la aplicación
             Console.WriteLine("Presiona Enter para salir...");
