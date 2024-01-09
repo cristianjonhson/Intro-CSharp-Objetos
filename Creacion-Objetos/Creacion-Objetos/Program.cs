@@ -17,6 +17,7 @@ namespace Creacion_Objetos
 
     //Las interface pueden ser multiples
     public class Sale : ISale, ISave
+
     {
         public decimal Total { get; set; }
 
