@@ -8,6 +8,7 @@ namespace Creacion_Objetos
 
     //Generics: reutilizar codigo, en cuanto a metodos y clases
     //es muy comun en colecciones, listas, arrays, etc
+
     // Clase genérica llamada MyList que puede almacenar elementos de cualquier tipo (utilizando el tipo genérico T).
     public class MyList<T>
     {
@@ -43,6 +44,20 @@ namespace Creacion_Objetos
         }
     }
 
+    // Clase que representa una cerveza con propiedades de nombre y precio.
+    public class Beer
+    {
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+
+
+        // Método para proporcionar una representación personalizada de la cerveza.
+        public override string ToString()
+        {
+            return $"Name: {Name}, Price: {Price:C}";
+        }
+    }
+
     // Clase principal del programa.
     internal class Program
     {
@@ -51,7 +66,12 @@ namespace Creacion_Objetos
         {
             // Crear una instancia de MyList que almacena números enteros con un límite de 5 elementos.
             var numbers = new MyList<int>(5);
+
+            // Crear una instancia de MyList que almacena cadenas con un límite de 5 elementos.
             var names = new MyList<string>(5);
+
+            // Crear una instancia de MyList que almacena objetos de tipo Beer con un límite de 3 elementos.
+            var beers = new MyList<Beer>(3);
 
             // Agrega elementos a la lista numbers
             numbers.Add(1);
@@ -67,9 +87,15 @@ namespace Creacion_Objetos
             names.Add("Eva");
             names.Add("Charlie");
 
+            // Agrega elementos a la lista beers (objetos de tipo Beer).
+            beers.Add(new Beer { Name = "IPA", Price = 5.99m });
+            beers.Add(new Beer { Name = "Stout", Price = 7.50m });
+            beers.Add(new Beer { Name = "Lager", Price = 4.25m });
+
             // Imprime el contenido de ambas listas
             Console.WriteLine("Numbers: " + numbers.GetContent());
             Console.WriteLine("Names: " + names.GetContent());
+            Console.WriteLine("Beers: " + beers.GetContent());
 
             // Esperar la entrada del usuario antes de cerrar la aplicación
             Console.WriteLine("Presiona Enter para salir...");
