@@ -1,63 +1,85 @@
-﻿using Newtonsoft.Json;  // Importa la biblioteca Newtonsoft.Json para trabajar con JSON.
-using System;
+﻿using System;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace Creacion_Objetos
+class Program
 {
-    // Definición de la clase People que representa a una persona.
-    public class People
+    static string sharedJson = "{\"person\": {\"name\": \"John\", \"age\": 30, \"address\": {\"city\": \"ExampleCity\", \"zip\": \"12345\"}}}";
+    static object lockObject = new object();
+
+    static void Main()
     {
-        // Propiedades de la persona: Nombre y Edad.
+        // Crear dos tareas que manipulan el JSON compartido simultáneamente.
+        Task tarea1 = Task.Run(() => ModificarJson("Tarea 1"));
+        Task tarea2 = Task.Run(() => ModificarJson("Tarea 2"));
+
+        // Esperar a que ambas tareas finalicen antes de continuar.
+        Task.WaitAll(tarea1, tarea2);
+
+        Console.WriteLine("Programa principal ha terminado. Resultado final del JSON:");
+        Console.WriteLine(FormatJson(sharedJson));
+
+        // Esperar la entrada del usuario antes de cerrar la aplicación.
+        Console.WriteLine("Presiona Enter para salir...");
+        Console.ReadLine();
+    }
+
+    // Clase que representa la estructura del JSON
+    public class Person
+    {
         public string Name { get; set; }
         public int Age { get; set; }
+        public Address Address { get; set; }
 
-        // Constructor por defecto.
-        public People() { }
-
-        // Sobrescribe el método ToString para proporcionar una representación personalizada del objeto.
-        public override string ToString()
+        // Constructor para inicializar Address al crear una nueva instancia de Person.
+        public Person()
         {
-            return $"Objeto => Nombre: {Name}, Edad: {Age}";
+            Address = new Address();
         }
     }
 
-    // Clase principal del programa.
-    internal class Program
+    public class Address
     {
-        // Método principal que se ejecuta al iniciar el programa.
-        static void Main(string[] args)
+        public string City { get; set; }
+        public string Zip { get; set; }
+    }
+
+
+    static void ModificarJson(string nombreTarea)
+    {
+        lock (lockObject)
         {
-            // Crear una instancia de la clase People y asignar valores a sus propiedades.
-            var cristian = new People()
-            {
-                Name = "Cristian",
-                Age = 29
-            };
+            // Deserializar el JSON actual a un objeto de la clase Person.
+            Person person = JsonConvert.DeserializeObject<Person>(sharedJson);
 
-            // Serializar el objeto People a formato JSON utilizando Newtonsoft.Json.
-            string json = JsonConvert.SerializeObject(cristian);
+            // Modificar la estructura del objeto.
+            person.Age += 1;
+            person.Address.City = nombreTarea; // Modificar la ciudad con el nombre de la tarea.
 
-            // Imprimir la representación de la persona a través del método ToString personalizado.
-            Console.WriteLine(cristian.ToString());
+            // Simular algún procesamiento específico de la tarea.
+            Console.WriteLine($"{nombreTarea} modificó el JSON: {JsonConvert.SerializeObject(person)}");
 
-            // Imprimir la representación en formato JSON del objeto People.
-            Console.WriteLine("Json: " + json);
+            // Serializar el objeto modificado de vuelta a JSON.
+            sharedJson = JsonConvert.SerializeObject(person);
+        }
+    }
 
-            // Definir una cadena JSON que representa a una persona.
-            string myJson = @"{
-              ""Name"": ""Cris"",
-              ""Age"": 29
-            }";
+    // Método para formatear un JSON con indentación.
+    static string FormatJson(string json)
+    {
+        try
+        {
+            // Parsea el JSON para obtener un objeto JToken.
+            JToken parsedJson = JToken.Parse(json);
 
-            // Deserializar el JSON a un objeto People.
-            People person = JsonConvert.DeserializeObject<People>(myJson);
-
-            // Imprimir las propiedades del objeto People deserializado.
-            Console.WriteLine("Objeto: " + person.Name);
-            Console.WriteLine("Objeto: " + person.Age);
-
-            // Esperar la entrada del usuario antes de cerrar la aplicación.
-            Console.WriteLine("Presiona Enter para salir...");
-            Console.ReadLine();
+            // Convierte el objeto JToken a una cadena de JSON con formato.
+            return parsedJson.ToString(Formatting.Indented);
+        }
+        catch (JsonReaderException)
+        {
+            // En caso de un error al parsear el JSON, devuelve el JSON sin formato.
+            return json;
         }
     }
 }
