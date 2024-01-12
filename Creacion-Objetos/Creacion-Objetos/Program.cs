@@ -54,6 +54,8 @@ namespace Creacion_Objetos
         // Método para proporcionar una representación personalizada de la cerveza.
         public override string ToString()
         {
+            // La cadena interpolada ($) permite incrustar expresiones dentro de la cadena utilizando llaves {}.
+            // En este caso, estamos formateando las propiedades Name y Price como parte de la cadena.
             return $"Name: {Name}, Price: {Price:C}";
         }
     }
